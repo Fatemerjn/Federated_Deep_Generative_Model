@@ -1,7 +1,7 @@
 Federated Deep Generative Models
 
 This repository explores how federated learning and deep generative models (GANs) can work together.
-Instead of training GANs on one central dataset, multiple clients train locally and share their updates with a central server. This setup protects data privacy while still producing powerful generative models.
+Instead of training GANs on a single centralized dataset, multiple clients train locally and share their updates with a central server. This approach protects data privacy while still producing powerful generative models.
 
 The project includes three main notebooks: 1. Federated Conditional DCGAN – a conditional DCGAN trained across federated clients. 2. FedGAN v2 (Kaggle Run) – a clean, reproducible version designed to run easily on Kaggle GPUs. 3. FedGAN with Custom Synchronization – experiments with alternative aggregation rules beyond simple averaging.
 
@@ -9,7 +9,7 @@ The project includes three main notebooks: 1. Federated Conditional DCGAN – a 
 
 Why This Project Matters
 
-Federated learning is commonly used for classification and prediction tasks, but training generative models in this setting is less explored. These experiments demonstrate how GANs can be adapted to federated settings, opening opportunities for applications such as privacy-preserving image generation in healthcare, finance, and other sensitive domains.
+Federated learning is widely used for classification tasks, but applying it to generative modeling is less common. These experiments demonstrate how GANs can be adapted to federated settings, enabling applications such as privacy-preserving image generation in fields like healthcare, finance, and other sensitive domains.
 
 ⸻
 
@@ -24,8 +24,6 @@ Repository Structure
 ├─ checkpoints/ # saved models
 └─ README.md
 
-All the main experiments are in the notebooks. Supporting directories are created when you run them.
-
 ⸻
 
 Getting Started
@@ -36,18 +34,18 @@ conda create -n fedgan python=3.10 -y
 conda activate fedgan
 pip install torch torchvision torchaudio matplotlib tqdm scikit-learn torchmetrics
 
-Install the CUDA-enabled version of PyTorch if you have a GPU; otherwise, use the CPU version.
+Install the CUDA-enabled version of PyTorch if you have a GPU; otherwise, use the CPU build.
 
 Kaggle Setup
 
-Open the FedGAN v2 Kaggle notebook, enable GPU, and run all cells. No additional setup is needed.
+Open the FedGAN v2 Kaggle notebook, enable GPU, and run all cells. No additional setup is required.
 
 ⸻
 
 Datasets
 
-Default experiments use MNIST (handwritten digits).
-It will be downloaded automatically. You can switch to Fashion-MNIST or CIFAR-10 by editing the dataset section of the notebooks.
+The default dataset is MNIST (handwritten digits).
+It will be downloaded automatically. You can switch to Fashion-MNIST or CIFAR-10 by adjusting the dataset code in the notebooks.
 
 ⸻
 
@@ -59,16 +57,16 @@ What to Expect
 ⸻
 
 Tips for Training
-• Blurry or repeated samples → reduce discriminator learning rate.
-• Instability during training → lower the number of local epochs or add small amounts of noise.
-• More realistic outputs → increase the number of federated rounds.
+• If samples are blurry or repetitive → reduce discriminator learning rate.
+• If training is unstable → lower the number of local epochs or add small amounts of noise.
+• For more realistic outputs → increase the number of federated rounds.
 
 ⸻
 
-Extensions
-• Experiment with non-IID client partitions.
-• Add privacy mechanisms such as differential privacy.
-• Test additional aggregation algorithms (FedProx, FedAdam, etc.).
+Possible Extensions
+• Test on non-IID client partitions.
+• Add privacy-preserving mechanisms (e.g., differential privacy).
+• Try different aggregation methods (FedProx, FedAdam, etc.).
 • Replace MNIST with more complex datasets.
 
 ⸻
@@ -84,7 +82,3 @@ References
 License
 
 This project is released under the MIT License.
-
-⸻
-
-do you want me to also prepare a shorter summary version (about one-third of this length) that you could use as the GitHub repo front-page description?
