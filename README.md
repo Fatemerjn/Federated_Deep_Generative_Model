@@ -211,4 +211,4 @@ Federated specifics:
 
 ## License
 
-Unless otherwise stated, this project is released under the **MIT License**. Update the license file if you use another license.
+Unless otherwise stated, this project is released under the **MIT License**.
