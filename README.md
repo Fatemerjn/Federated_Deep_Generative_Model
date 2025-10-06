@@ -1,200 +1,90 @@
-# Deep Federated Generative Models — (cDCGAN, FedGAN v2, Custom Sync)
+Federated Deep Generative Models
 
-This repository hosts three complementary notebooks demonstrating **federated learning for generative models** using PyTorch:
+This repository explores how federated learning and deep generative models (GANs) can work together.
+Instead of training GANs on one central dataset, multiple clients train locally and share their updates with a central server. This setup protects data privacy while still producing powerful generative models.
 
-1. **`Federated_conditional_DCGAN.ipynb`** — Conditional DCGAN trained in a federated setting (clients + FedAvg), class-conditional sampling.
-2. **`Deep_Federated_Generative_Models__FedGAN_v2_kaggle_run.ipynb`** — A Kaggle‑friendly FedGAN v2 pipeline with clean logging and reproducible outputs.
-3. **`FedGAN_Custom_sync_strategy.ipynb`** — A variant exploring custom synchronization/aggregation strategies on top of standard FedAvg.
+The project includes three main notebooks: 1. Federated Conditional DCGAN – a conditional DCGAN trained across federated clients. 2. FedGAN v2 (Kaggle Run) – a clean, reproducible version designed to run easily on Kaggle GPUs. 3. FedGAN with Custom Synchronization – experiments with alternative aggregation rules beyond simple averaging.
 
-> If you are new to FL + GANs: start with **`Federated_conditional_DCGAN.ipynb`**, then run the **Kaggle v2** notebook, and finally experiment with **Custom Sync**.
+⸻
 
----
+Why This Project Matters
 
-## ✨ Highlights
+Federated learning is commonly used for classification and prediction tasks, but training generative models in this setting is less explored. These experiments demonstrate how GANs can be adapted to federated settings, opening opportunities for applications such as privacy-preserving image generation in healthcare, finance, and other sensitive domains.
 
-- **Federated Simulation**: Multiple clients train locally; server aggregates (FedAvg by default).
-- **Conditional Generation**: Class‑conditional DCGAN capable of label‑controlled synthesis.
-- **Kaggle‑Ready**: A notebook that runs out‑of‑the‑box on Kaggle GPU with minimal path assumptions.
-- **Extensible**: Pluggable aggregation (FedAvg → FedProx/FedAdam/custom), non‑IID splits, DP.
-- **Clear Outputs**: Loss curves, image grids, and optional metrics (IS/FID) hooks.
+⸻
 
----
+Repository Structure
 
-## 📦 Repository Structure
-
-```
 .
-├─ Federated_conditional_DCGAN.ipynb
-├─ Deep_Federated_Generative_Models__FedGAN_v2_kaggle_run.ipynb
-├─ FedGAN_Custom_sync_strategy.ipynb
-├─ README.md  ← you are here
-└─ (created at runtime)
-   ├─ outputs/           # generated samples, logs, model weights
-   └─ checkpoints/       # optional torch.save(...) artifacts
-```
+├─ notebooks/
+│ ├─ Federated_conditional_DCGAN.ipynb
+│ ├─ Deep_Federated_Generative_Models\_\_FedGAN_v2_kaggle_run.ipynb
+│ └─ FedGAN_Custom_sync_strategy.ipynb
+├─ outputs/ # generated images & logs
+├─ checkpoints/ # saved models
+└─ README.md
 
-You can keep everything notebook‑centric; the directories above are created by the notebooks if missing.
+All the main experiments are in the notebooks. Supporting directories are created when you run them.
 
----
+⸻
 
-## 🧰 Environment & Setup
+Getting Started
 
-### Option A — Conda (recommended)
-```bash
+Local Setup
+
 conda create -n fedgan python=3.10 -y
 conda activate fedgan
-# Choose a torch build suitable to your machine (CPU/GPU).
-# CUDA 11.8 example (Linux/Windows with NVIDIA GPU):
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
-# CPU-only example:
-# pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+pip install torch torchvision torchaudio matplotlib tqdm scikit-learn torchmetrics
 
-pip install numpy matplotlib tqdm scikit-learn torchmetrics
-```
+Install the CUDA-enabled version of PyTorch if you have a GPU; otherwise, use the CPU version.
 
-### Option B — Kaggle
-- Open **`Deep_Federated_Generative_Models__FedGAN_v2_kaggle_run.ipynb`** in a Kaggle Notebook.
-- Turn on **GPU** (if available) and run all cells in order. No extra path setup should be required.
+Kaggle Setup
 
-> Python 3.9+ is recommended. CUDA support is optional but speeds up training significantly.
+Open the FedGAN v2 Kaggle notebook, enable GPU, and run all cells. No additional setup is needed.
 
----
+⸻
 
-## 📚 Datasets
+Datasets
 
-The notebooks default to **MNIST** via `torchvision` and will auto‑download:
-- 10 classes (digits 0–9), 28×28 grayscale
-- Used for both **federated partitioning** and **conditional** generation in cDCGAN
+Default experiments use MNIST (handwritten digits).
+It will be downloaded automatically. You can switch to Fashion-MNIST or CIFAR-10 by editing the dataset section of the notebooks.
 
-You can easily switch to **Fashion‑MNIST** or other torchvision datasets by editing the data section.
-For **non‑IID** experiments, label‑skewed splits per client can be enabled (see the Custom Sync notebook for hooks).
+⸻
 
----
+What to Expect
+• Conditional samples generated per digit (0–9).
+• Training curves showing generator and discriminator progress across rounds.
+• Comparisons between standard federated averaging and custom synchronization strategies.
 
-## 🚀 How to Run
+⸻
 
-### 1) Federated Conditional DCGAN
-Notebook: **`Federated_conditional_DCGAN.ipynb`**
+Tips for Training
+• Blurry or repeated samples → reduce discriminator learning rate.
+• Instability during training → lower the number of local epochs or add small amounts of noise.
+• More realistic outputs → increase the number of federated rounds.
 
-- Implements a conditional DCGAN (`G`/`D` with label conditioning) trained across **K** clients.
-- **Federated rounds**:
-  1. Server broadcasts global params
-  2. Clients train locally for `E` epochs
-  3. Server aggregates (FedAvg) → new global
-  4. Log losses and sample conditioned grids
+⸻
 
-**Key Config (top cells):**
-- `num_clients`, `rounds`, `local_epochs`
-- `batch_size`, `lrG`, `lrD`, `betas`
-- `z_dim`, conditional embedding size, image size
-- `device` (`cuda`/`cpu`)
+Extensions
+• Experiment with non-IID client partitions.
+• Add privacy mechanisms such as differential privacy.
+• Test additional aggregation algorithms (FedProx, FedAdam, etc.).
+• Replace MNIST with more complex datasets.
 
-**Outputs:**
-- Grids per label (0–9), loss curves
-- Optional model checkpoints under `checkpoints/`
+⸻
 
----
+References
+• McMahan et al., Communication-Efficient Learning of Deep Networks from Decentralized Data (FedAvg, 2017)
+• Goodfellow et al., Generative Adversarial Nets (GANs, 2014)
+• Radford et al., Unsupervised Representation Learning with DCGAN (2016)
+• Mirza & Osindero, Conditional Generative Adversarial Nets (2014)
 
-### 2) FedGAN v2 — Kaggle Run
-Notebook: **`Deep_Federated_Generative_Models__FedGAN_v2_kaggle_run.ipynb`**
+⸻
 
-- A clean Kaggle pipeline with deterministic seeds and simple logging.
-- Same fed cycle (broadcast → local train → aggregate), plus quality‑of‑life utilities for plotting and saving.
+License
 
-**Tips:**
-- Ensure Kaggle **GPU** is enabled for faster runs.
-- Adjust `K`, `rounds`, and `local_epochs` for runtime budget.
-- Metrics hooks for IS/FID are provided (enable as needed; may require `torchmetrics` + `scipy`).
+This project is released under the MIT License.
 
-**Outputs:**
-- Inline images per round, loss curves, and optional saved weights.
+⸻
 
----
-
-### 3) Custom Synchronization Strategy
-Notebook: **`FedGAN_Custom_sync_strategy.ipynb`**
-
-- Demonstrates **alternative server update rules** (e.g., weighted/thresholded updates, damped moving averages, or client selection policies).
-- Useful for **straggler mitigation**, **communication constraints**, or **stability** experiments in GAN training.
-
-**What to tweak:**
-- The **aggregator** function (e.g., switch from pure FedAvg to a custom rule)
-- **Client sampling** per round (uniform, proportional to data volume, or skewed)
-- **Non‑IID** splits
-
-**Outputs:**
-- Loss curves and samples (add more logging if you run ablations)
-
----
-
-## 📏 Metrics (optional but recommended)
-
-GANs benefit from **qualitative** and **quantitative** checks:
-
-- **Qualitative**: Fixed‑noise sample grids, per‑label grids (cDCGAN); visual sharpness/variety over rounds.
-- **Quantitative**:
-  - **IS** (Inception Score): higher is generally better (watch for mode collapse).
-  - **FID** (Fréchet Inception Distance): lower is better (requires feature extractor; more setup).
-
-> The notebooks include hooks/snippets for these metrics. Enable as needed. For strict comparability, fix seeds and dataset partitions.
-
----
-
-## ⚙️ Configuration Cheatsheet
-
-Common hyperparameters (set near the top of each notebook):
-- `num_clients`: 5–20 for MNIST demos
-- `rounds`: 50–200 (increase for higher fidelity)
-- `local_epochs`: 1–5 (more local steps = fewer comms but may drift)
-- `batch_size`: 64–256
-- `z_dim`: 64–128 (latent code)
-- `lrG`, `lrD`: typically `2e-4` with Adam `betas=(0.5, 0.999)` for DCGAN‑style training
-
-Federated specifics:
-- **Aggregator**: FedAvg (baseline), custom rule in the Custom Sync notebook
-- **Client sampling**: all or a subset each round
-- **Weighting**: by client dataset size (recommended)
-
----
-
-## 🧪 Reproducibility
-
-- Set all seeds (`random`, `numpy`, `torch`, `cuda`).
-- Log the exact **Torch**, **CUDA**, and **driver** versions.
-- Save configs and checkpoints with round indices.
-- For Kaggle: record the notebook Docker image hash (visible in the UI).
-
----
-
-## 🛠️ Troubleshooting
-
-- **Blurry or identical samples**: reduce `lrD`, slightly increase `lrG`, or increase training rounds; verify conditioning pipeline.
-- **Discriminator overpowering**: lower `lrD`, use label smoothing, or add instance noise.
-- **Destabilization with many local epochs**: decrease `local_epochs` or add server‑side damping in the aggregator.
-- **Inconsistent client sizes**: use size‑weighted aggregation (FedAvg default) and consider stratified client sampling.
-
----
-
-## 🔌 Extending the Notebooks
-
-- Swap MNIST with **Fashion‑MNIST** or **CIFAR‑10** (update model size/arch for RGB).
-- Add **Differential Privacy** (e.g., Opacus) for private FL.
-- Try **FedProx**, **FedAdam**, or **scaffold‑like** corrections.
-- Explore **non‑IID** partitions: dirichlet label skew, quantity skew, real client logs.
-- Add **projected discriminator** or **spectral norm** for stronger cGAN baselines.
-
----
-
-## 📖 References
-
-- McMahan et al., *Communication‑Efficient Learning of Deep Networks from Decentralized Data*, AISTATS 2017 (FedAvg)  
-- Goodfellow et al., *Generative Adversarial Nets*, NeurIPS 2014  
-- Radford et al., *Unsupervised Representation Learning with DCGAN*, ICLR 2016  
-- Mirza & Osindero, *Conditional Generative Adversarial Nets*, 2014  
-- Heusel et al., *GANs Trained by a Two Time‑Scale Update Rule Converge to a Local Nash Equilibrium*, NeurIPS 2017 (FID)
-
----
-
-## 📜 License
-
-Unless otherwise stated, this project is released under the **MIT License**. Update the license file if you use another license.
+do you want me to also prepare a shorter summary version (about one-third of this length) that you could use as the GitHub repo front-page description?
